@@ -15,13 +15,14 @@ module.exports = {
     proxy: {
       '/api': {
         target: 'https://localhost:7162',
-        secure: false, // Đảm bảo bỏ qua chứng chỉ tự ký
+        secure: false, // Bypass self-signed certificate
         changeOrigin: true,
         onProxyReq: (proxyReq, req, res) => {
           proxyReq.setHeader('origin', 'http://localhost:3000');
         }
       }
     },
+    historyApiFallback: true // Support direct URL access
   },
   module: {
     rules: [

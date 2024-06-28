@@ -1,9 +1,13 @@
-.App {
-  font-family: Arial, sans-serif;
+body {
+  font-family: 'Arial', sans-serif;
+  background: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  color: #333;
 }
 
 .navbar {
-  background-color: #333;
+  background-color: #4CAF50;
   overflow: hidden;
 }
 
@@ -27,5 +31,28 @@
 }
 
 .menu li a:hover {
-  background-color: #111;
+  background-color: #45a049;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 1.2em;
+}
+
+a {
+  color: #4CAF50;
+}
+
+a:hover {
+  text-decoration: underline;
 }

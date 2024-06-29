@@ -44,30 +44,30 @@ const UploadFile = () => {
     try {
       const response = await axios.post('https://localhost:7162/api/FileUpload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data'
         },
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
-        timeout: 0,
+        timeout: 0
       });
 
       if (response.status === 200) {
-        setMessage('File uploaded successfully: ' + response.data.message);
+        setMessage('Tải tệp lên thành công: ' + response.data.message);
         setSignalDataId(response.data.signalDataId);
         setShowResults(true); // Hiển thị kết quả sau khi tải lên thành công
       } else if (response.status === 202) {
-        setMessage('File is being processed. Please check back later for the results.');
+        setMessage('Tệp đang được xử lý. Vui lòng kiểm tra lại sau.');
         setShowResults(true); // Hiển thị kết quả sau khi tải lên thành công
       } else {
-        setMessage('Unexpected response from server: ' + response.status);
+        setMessage('Phản hồi không mong đợi từ máy chủ: ' + response.status);
       }
     } catch (error) {
       if (error.response) {
-        setMessage('Error uploading file: ' + error.response.data);
+        setMessage('Lỗi khi tải tệp lên: ' + error.response.data);
       } else if (error.request) {
-        setMessage('Error uploading file: No response received from server');
+        setMessage('Lỗi khi tải tệp lên: Không nhận được phản hồi từ máy chủ');
       } else {
-        setMessage('Error uploading file: ' + error.message);
+        setMessage('Lỗi khi tải tệp lên: ' + error.message);
       }
     } finally {
       setIsUploading(false);
@@ -81,7 +81,7 @@ const UploadFile = () => {
         setShowDetails(true); // Hiển thị chi tiết khi nhận được dữ liệu
       })
       .catch((error) => {
-        setMessage('Error fetching images: ' + error.message);
+        setMessage('Lỗi khi lấy ảnh: ' + error.message);
       });
   };
 
@@ -109,11 +109,11 @@ const UploadFile = () => {
 
   return (
     <div>
-      <h1>GPS Jamming Classifier</h1>
+      <h1>Phân loại Nhiễu GPS</h1>
       <div className="results-container">
         <div className="left-panel">
           <div>
-            <label>Chọn tệp:</label>
+            <label>Chọn tệp cần phân tích:</label>
             <input 
               type="file" 
               onChange={handleFileChange} 
@@ -122,12 +122,12 @@ const UploadFile = () => {
             />
           </div>
           <div>
-            <label>Số lượng ảnh:</label>
+            <label>Số lượng ảnh cần tạo từ tín hiệu:</label>
             <input 
               type="number" 
               value={numImages} 
               onChange={handleNumImagesChange} 
-              placeholder="Number of Images" 
+              placeholder="Số lượng ảnh" 
               disabled={isUploading || showResults} 
             />
           </div>
@@ -137,7 +137,7 @@ const UploadFile = () => {
               type="number" 
               value={fs} 
               onChange={handleFsChange} 
-              placeholder="Sampling Frequency (Hz)" 
+              placeholder="Tần số lấy mẫu (Hz)" 
               disabled={isUploading || showResults} 
             />
           </div>
@@ -147,23 +147,23 @@ const UploadFile = () => {
               type="number" 
               value={time} 
               onChange={handleTimeChange} 
-              placeholder="Analysis Time (s)" 
+              placeholder="Thời gian phân tích (s)" 
               disabled={isUploading || showResults} 
             />
           </div>
           {!showResults ? (
-            <button onClick={handleFileUpload} disabled={isUploading}>Upload File</button>
+            <button onClick={handleFileUpload} disabled={isUploading}>Tải tệp lên</button>
           ) : (
-            <button onClick={handleReset}>Reset</button>
+            <button onClick={handleReset}>Đặt lại</button>
           )}
           {showResults && (
             <>
-              <h2>Detection Results</h2>
+              <h2>Kết quả phát hiện</h2>
               <p>{message}</p>
               {showDetails ? (
-                <button onClick={handleToggleDetails}>Hide Details</button>
+                <button onClick={handleToggleDetails}>Ẩn chi tiết</button>
               ) : (
-                <button onClick={handleViewDetails}>View Details</button>
+                <button onClick={handleViewDetails}>Xem chi tiết</button>
               )}
             </>
           )}
@@ -173,7 +173,7 @@ const UploadFile = () => {
             {images.map((image, index) => (
               <div key={index}>
                 <img src={`data:image/png;base64,${image.dataBase64}`} alt={image.class} />
-                <p>Jamming class: {image.class}</p>
+                <p>Lớp nhiễu: {image.class}</p>
               </div>
             ))}
           </div>

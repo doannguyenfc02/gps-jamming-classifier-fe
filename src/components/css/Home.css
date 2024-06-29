@@ -1,0 +1,74 @@
+.App {
+    font-family: Arial, sans-serif;
+    text-align: center; /* Căn giữa tất cả các văn bản trong toàn bộ ứng dụng */
+  }
+  
+  .navbar {
+    background-color: #333;
+    overflow: hidden;
+  }
+  
+  .menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Căn giữa các mục menu */
+  }
+  
+  .menu li {
+    float: left;
+  }
+  
+  .menu li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  .menu li a:hover {
+    background-color: #111;
+  }
+  
+  .center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; /* Chiều cao của container, điều chỉnh theo nhu cầu */
+    flex-direction: column; /* Đặt các phần tử theo cột */
+    text-align: center; /* Căn giữa nội dung */
+  }
+  
+  .center-container h1 {
+    margin-bottom: 10px; /* Giảm khoảng cách dưới của tiêu đề */
+  }
+  
+  .center-container p {
+    margin-bottom: 20px; /* Giảm khoảng cách dưới của đoạn văn */
+  }
+  
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px 0; /* Giảm khoảng cách trên và dưới của nút */
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  

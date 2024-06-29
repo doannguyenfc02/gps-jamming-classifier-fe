@@ -7,24 +7,30 @@ const ManageData = () => {
   const [message, setMessage] = useState('');
   const [details, setDetails] = useState(null); // State để lưu chi tiết dữ liệu
   const [selectedId, setSelectedId] = useState(null); // State để lưu trữ id của mục đang được chọn
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     axios.get('https://localhost:7162/api/DataManagement')
       .then((response) => {
         setDataList(response.data);
+        setLoading(false);
         if (response.data.length > 0) {
           handleViewDetails(response.data[0].id); // Chọn mục đầu tiên để xem chi tiết
+        } else {
+          setError('Không có dữ liệu nào được tìm thấy.');
         }
       })
       .catch((error) => {
-        setMessage('Error fetching data: ' + error.message);
+        setMessage('Không thể lấy dữ liệu từ máy chủ.');
+        setLoading(false);
       });
   }, []);
 
   const handleDelete = (id) => {
     axios.delete(`https://localhost:7162/api/DataManagement/${id}`)
       .then((response) => {
-        setMessage('Data deleted successfully.');
+        setMessage('Xóa dữ liệu thành công.');
         const updatedDataList = dataList.filter(item => item.id !== id);
         setDataList(updatedDataList);
         if (updatedDataList.length > 0) {
@@ -34,7 +40,7 @@ const ManageData = () => {
         }
       })
       .catch((error) => {
-        setMessage('Error deleting data: ' + error.message);
+        setMessage('Lỗi khi xóa dữ liệu.');
       });
   };
 
@@ -45,33 +51,41 @@ const ManageData = () => {
         setDetails(response.data);
       })
       .catch((error) => {
-        setMessage('Error fetching details: ' + error.message);
+        setMessage('Không thể lấy chi tiết dữ liệu.');
       });
   };
+
+  if (loading) {
+    return <div>Đang tải dữ liệu...</div>;
+  }
 
   return (
     <div className="manage-data-container">
       <div className="data-list">
-        <h1>Manage Data</h1>
+        <h1>Quản lý dữ liệu</h1>
         {message && <p>{message}</p>}
-        <div>
-          {dataList.map((data) => (
-            <div
-              key={data.id}
-              className={`data-item ${selectedId === data.id ? 'selected' : ''}`}
-              onClick={() => handleViewDetails(data.id)} // Thêm sự kiện onClick cho toàn bộ div
-            >
-              <h3>{data.description}</h3>
-              <p>Timestamp: {new Date(data.timestamp).toLocaleString()}</p>
-              <button onClick={(e) => {e.stopPropagation(); handleDelete(data.id);}}>Delete</button>
-            </div>
-          ))}
-        </div>
+        {error ? (
+          <p>{error}</p>
+        ) : (
+          <div>
+            {dataList.map((data) => (
+              <div
+                key={data.id}
+                className={`data-item ${selectedId === data.id ? 'selected' : ''}`}
+                onClick={() => handleViewDetails(data.id)} // Thêm sự kiện onClick cho toàn bộ div
+              >
+                <h3>{data.description}</h3>
+                <p>Thời gian: {new Date(data.timestamp).toLocaleString()}</p>
+                <button onClick={(e) => { e.stopPropagation(); handleDelete(data.id); }}>Xóa</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="details-view">
         {details ? (
           <div>
-            <h2>Details</h2>
+            <h2>Chi tiết</h2>
             {details.map((detail, index) => (
               <div key={index} className="detail-item">
                 <h3>{detail.class}</h3>
@@ -80,7 +94,7 @@ const ManageData = () => {
             ))}
           </div>
         ) : (
-          <p>Select a signal data to view details</p>
+          <p>Chọn một dữ liệu tín hiệu để xem chi tiết</p>
         )}
       </div>
     </div>

@@ -1,17 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './css/Home.css'; // Đảm bảo đường dẫn đúng tới tệp CSS của bạn
 
 const Home = () => {
   return (
-    <div>
-      <h1>Welcome to GPS Jamming Classifier</h1>
-      <p>This system allows you to upload and analyze GPS data for jamming detection.</p>
+    <div className="center-container">
+      <h1>Chào mừng đến với hệ thống Phát hiện, phân loại các bộ phá sóng GPS</h1>
+      <p>Hệ thống này cho phép bạn tải lên và phân tích dữ liệu GPS để phát hiện nhiễu.</p>
       <nav>
-        <ul>
-          <li><Link to="/upload">Upload File</Link></li>
-          <li><Link to="/results">View Results</Link></li>
-          <li><Link to="/manage">Manage Data</Link></li>
-        </ul>
+        <Link to="/upload" className="button">Tải tệp lên</Link>
+        <Link to="/manage" className="button">Quản lý dữ liệu</Link>
       </nav>
     </div>
   );

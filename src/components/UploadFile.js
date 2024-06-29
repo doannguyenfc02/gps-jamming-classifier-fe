@@ -40,6 +40,7 @@ const UploadFile = () => {
     formData.append('numImages', numImages);
     formData.append('fs', fs);
     formData.append('time', time);
+    formData.append('fileName', file.name);
 
     try {
       const response = await axios.post('https://localhost:7162/api/FileUpload', formData, {

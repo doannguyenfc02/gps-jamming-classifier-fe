@@ -74,7 +74,7 @@ const ManageData = () => {
                 className={`data-item ${selectedId === data.id ? 'selected' : ''}`}
                 onClick={() => handleViewDetails(data.id)} // Thêm sự kiện onClick cho toàn bộ div
               >
-                <h3>{data.description}</h3>
+                <h3>Tên file đánh giá:{data.fileName }</h3>
                 <p>Thời gian: {new Date(data.timestamp).toLocaleString()}</p>
                 <button onClick={(e) => { e.stopPropagation(); handleDelete(data.id); }}>Xóa</button>
               </div>

@@ -3,185 +3,200 @@ import axios from 'axios';
 import './css/UploadFile.css'; // Import file CSS
 
 const UploadFile = () => {
-  const [file, setFile] = useState(null);
-  const [numImages, setNumImages] = useState(2);
-  const [fs, setFs] = useState(10e6);
-  const [time, setTime] = useState(10);
-  const [message, setMessage] = useState('');
-  const [showDetails, setShowDetails] = useState(false);
-  const [images, setImages] = useState([]);
-  const [signalDataId, setSignalDataId] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [showResults, setShowResults] = useState(false); // State để quản lý hiển thị kết quả
+    const [file, setFile] = useState(null);
+    const [numImages, setNumImages] = useState(2);
+    const [fs, setFs] = useState(10e6);
+    const [time, setTime] = useState(10);
+    const [message, setMessage] = useState('');
+    const [showDetails, setShowDetails] = useState(false);
+    const [images, setImages] = useState([]);
+    const [signalDataId, setSignalDataId] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [showResults, setShowResults] = useState(false); // State để quản lý hiển thị kết quả
 
-  const fileInputRef = useRef(null);
+    const fileInputRef = useRef(null);
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
+    };
 
-  const handleNumImagesChange = (event) => {
-    setNumImages(event.target.value);
-  };
+    const handleNumImagesChange = (event) => {
+        setNumImages(event.target.value);
+    };
 
-  const handleFsChange = (event) => {
-    setFs(event.target.value);
-  };
+    const handleFsChange = (event) => {
+        setFs(event.target.value);
+    };
 
-  const handleTimeChange = (event) => {
-    setTime(event.target.value);
-  };
+    const handleTimeChange = (event) => {
+        setTime(event.target.value);
+    };
 
-  const handleFileUpload = async () => {
-    setIsUploading(true);
+    const handleFileUpload = async () => {
+        setIsUploading(true);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('numImages', numImages);
-    formData.append('fs', fs);
-    formData.append('time', time);
-    formData.append('fileName', file.name);
+        if (!file) {
+            setMessage('Vui lòng chọn tệp để tải lên.');
+            setIsUploading(false);
+            return;
+        }
 
-    try {
-      const response = await axios.post('https://localhost:7162/api/FileUpload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-        timeout: 0
-      });
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('numImages', numImages);
+        formData.append('fs', fs);
+        formData.append('time', time);
+        formData.append('fileName', file.name);
 
-      if (response.status === 200) {
-        setMessage('Tải tệp lên thành công: ' + response.data.message);
-        setSignalDataId(response.data.signalDataId);
-        setShowResults(true); // Hiển thị kết quả sau khi tải lên thành công
-      } else if (response.status === 202) {
-        setMessage('Tệp đang được xử lý. Vui lòng kiểm tra lại sau.');
-        setShowResults(true); // Hiển thị kết quả sau khi tải lên thành công
-      } else {
-        setMessage('Phản hồi không mong đợi từ máy chủ: ' + response.status);
-      }
-    } catch (error) {
-      if (error.response) {
-        setMessage('Lỗi khi tải tệp lên: ' + error.response.data);
-      } else if (error.request) {
-        setMessage('Lỗi khi tải tệp lên: Không nhận được phản hồi từ máy chủ');
-      } else {
-        setMessage('Lỗi khi tải tệp lên: ' + error.message);
-      }
-    } finally {
-      setIsUploading(false);
-    }
-  };
+        const token = localStorage.getItem('token');
 
-  const handleViewDetails = () => {
-    axios.get(`https://localhost:7162/api/Spectrograms/${signalDataId}`)
-      .then((response) => {
-        setImages(response.data);
-        setShowDetails(true); // Hiển thị chi tiết khi nhận được dữ liệu
-      })
-      .catch((error) => {
-        setMessage('Lỗi khi lấy ảnh: ' + error.message);
-      });
-  };
+        if (!token) {
+            setMessage('Không có token. Vui lòng đăng nhập lại.');
+            setIsUploading(false);
+            return;
+        }
 
-  const handleToggleDetails = () => {
-    setShowDetails(!showDetails);
-  };
+        try {
+            const response = await axios.post('https://localhost:7162/api/FileUpload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}` // Thêm token vào header
+                },
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
+                timeout: 0
+            });
 
-  const handleReset = () => {
-    setFile(null);
-    setNumImages(2);
-    setFs(10e6);
-    setTime(10);
-    setMessage('');
-    setShowDetails(false);
-    setImages([]);
-    setSignalDataId(null);
-    setIsUploading(false);
-    setShowResults(false);
+            if (response.status === 200) {
+                setMessage('Tải tệp lên thành công: ' + response.data.message);
+                setSignalDataId(response.data.signalDataId);
+                setShowResults(true); // Hiển thị kết quả sau khi tải lên thành công
+            } else if (response.status === 202) {
+                setMessage('Tệp đang được xử lý. Vui lòng kiểm tra lại sau.');
+                setShowResults(true); // Hiển thị kết quả sau khi tải lên thành công
+            } else {
+                setMessage('Phản hồi không mong đợi từ máy chủ: ' + response.status);
+            }
+        } catch (error) {
+            if (error.response) {
+                setMessage('Lỗi khi tải tệp lên: ' + error.response.data);
+            } else if (error.request) {
+                setMessage('Lỗi khi tải tệp lên: Không nhận được phản hồi từ máy chủ');
+            } else {
+                setMessage('Lỗi khi tải tệp lên: ' + error.message);
+            }
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
-    // Reset input file
-    if (fileInputRef.current) {
-      fileInputRef.current.value = null;
-    }
-  };
+    const handleViewDetails = () => {
+        axios.get(`https://localhost:7162/api/Spectrograms/${signalDataId}`)
+            .then((response) => {
+                setImages(response.data);
+                setShowDetails(true); // Hiển thị chi tiết khi nhận được dữ liệu
+            })
+            .catch((error) => {
+                setMessage('Error fetching images: ' + error.message);
+            });
+    };
 
-  return (
-    <div>
-      <h1>Phân loại Nhiễu GPS</h1>
-      <div className="results-container">
-        <div className="left-panel">
-          <div>
-            <label>Chọn tệp cần phân tích:</label>
-            <input 
-              type="file" 
-              onChange={handleFileChange} 
-              disabled={isUploading || showResults} 
-              ref={fileInputRef} 
-            />
-          </div>
-          <div>
-            <label>Số lượng ảnh cần tạo từ tín hiệu:</label>
-            <input 
-              type="number" 
-              value={numImages} 
-              onChange={handleNumImagesChange} 
-              placeholder="Số lượng ảnh" 
-              disabled={isUploading || showResults} 
-            />
-          </div>
-          <div>
-            <label>Tần số lấy mẫu (Hz):</label>
-            <input 
-              type="number" 
-              value={fs} 
-              onChange={handleFsChange} 
-              placeholder="Tần số lấy mẫu (Hz)" 
-              disabled={isUploading || showResults} 
-            />
-          </div>
-          <div>
-            <label>Thời gian phân tích (s):</label>
-            <input 
-              type="number" 
-              value={time} 
-              onChange={handleTimeChange} 
-              placeholder="Thời gian phân tích (s)" 
-              disabled={isUploading || showResults} 
-            />
-          </div>
-          {!showResults ? (
-            <button onClick={handleFileUpload} disabled={isUploading}>Tải tệp lên</button>
-          ) : (
-            <button onClick={handleReset}>Đặt lại</button>
-          )}
-          {showResults && (
-            <>
-              <h2>Kết quả phát hiện</h2>
-              <p>{message}</p>
-              {showDetails ? (
-                <button onClick={handleToggleDetails}>Ẩn chi tiết</button>
-              ) : (
-                <button onClick={handleViewDetails}>Xem chi tiết</button>
-              )}
-            </>
-          )}
+    const handleToggleDetails = () => {
+        setShowDetails(!showDetails);
+    };
+
+    const handleReset = () => {
+        setFile(null);
+        setNumImages(2);
+        setFs(10e6);
+        setTime(10);
+        setMessage('');
+        setShowDetails(false);
+        setImages([]);
+        setSignalDataId(null);
+        setIsUploading(false);
+        setShowResults(false);
+
+        // Reset input file
+        if (fileInputRef.current) {
+            fileInputRef.current.value = null;
+        }
+    };
+
+    return (
+        <div>
+            <h1>Phân loại Nhiễu GPS</h1>
+            <div className="results-container">
+                <div className="left-panel">
+                    <div>
+                        <label>Chọn tệp cần phân tích:</label>
+                        <input 
+                            type="file" 
+                            onChange={handleFileChange} 
+                            disabled={isUploading || showResults} 
+                            ref={fileInputRef} 
+                        />
+                    </div>
+                    <div>
+                        <label>Số lượng ảnh cần tạo từ tín hiệu:</label>
+                        <input 
+                            type="number" 
+                            value={numImages} 
+                            onChange={handleNumImagesChange} 
+                            placeholder="Số lượng ảnh" 
+                            disabled={isUploading || showResults} 
+                        />
+                    </div>
+                    <div>
+                        <label>Tần số lấy mẫu (Hz):</label>
+                        <input 
+                            type="number" 
+                            value={fs} 
+                            onChange={handleFsChange} 
+                            placeholder="Tần số lấy mẫu (Hz)" 
+                            disabled={isUploading || showResults} 
+                        />
+                    </div>
+                    <div>
+                        <label>Thời gian phân tích (s):</label>
+                        <input 
+                            type="number" 
+                            value={time} 
+                            onChange={handleTimeChange} 
+                            placeholder="Thời gian phân tích (s)" 
+                            disabled={isUploading || showResults} 
+                        />
+                    </div>
+                    {!showResults ? (
+                        <button onClick={handleFileUpload} disabled={isUploading}>Tải tệp lên</button>
+                    ) : (
+                        <button onClick={handleReset}>Đặt lại</button>
+                    )}
+                    {showResults && (
+                        <>
+                            <h2>Kết quả phát hiện</h2>
+                            <p>{message}</p>
+                            {showDetails ? (
+                                <button onClick={handleToggleDetails}>Ẩn chi tiết</button>
+                            ) : (
+                                <button onClick={handleViewDetails}>Xem chi tiết</button>
+                            )}
+                        </>
+                    )}
+                </div>
+                {showDetails && (
+                    <div className="right-panel">
+                        {images.map((image, index) => (
+                            <div key={index}>
+                                <img src={`data:image/png;base64,${image.dataBase64}`} alt={image.class} />
+                                <p>Lớp nhiễu: {image.class}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
-        {showDetails && (
-          <div className="right-panel">
-            {images.map((image, index) => (
-              <div key={index}>
-                <img src={`data:image/png;base64,${image.dataBase64}`} alt={image.class} />
-                <p>Lớp nhiễu: {image.class}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default UploadFile;

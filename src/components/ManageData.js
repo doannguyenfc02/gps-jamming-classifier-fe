@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './css/ManageData.css'; // Đảm bảo rằng đường dẫn đúng
+import './css/ManageData.css';
 
 const ManageData = () => {
   const [dataList, setDataList] = useState([]);
   const [message, setMessage] = useState('');
-  const [details, setDetails] = useState(null); // State để lưu chi tiết dữ liệu
-  const [selectedId, setSelectedId] = useState(null); // State để lưu trữ id của mục đang được chọn
+  const [details, setDetails] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -16,7 +16,7 @@ const ManageData = () => {
         setDataList(response.data);
         setLoading(false);
         if (response.data.length > 0) {
-          handleViewDetails(response.data[0].id); // Chọn mục đầu tiên để xem chi tiết
+          handleViewDetails(response.data[0].id);
         } else {
           setError('Không có dữ liệu nào được tìm thấy.');
         }
@@ -34,9 +34,9 @@ const ManageData = () => {
         const updatedDataList = dataList.filter(item => item.id !== id);
         setDataList(updatedDataList);
         if (updatedDataList.length > 0) {
-          handleViewDetails(updatedDataList[0].id); // Cập nhật chi tiết với mục đầu tiên còn lại
+          handleViewDetails(updatedDataList[0].id);
         } else {
-          setDetails(null); // Xóa chi tiết khi không còn dữ liệu
+          setDetails(null);
         }
       })
       .catch((error) => {
@@ -45,7 +45,7 @@ const ManageData = () => {
   };
 
   const handleViewDetails = (id) => {
-    setSelectedId(id); // Cập nhật id của mục đang được chọn
+    setSelectedId(id);
     axios.get(`https://localhost:7162/api/Spectrograms/${id}`)
       .then((response) => {
         setDetails(response.data);
@@ -72,9 +72,9 @@ const ManageData = () => {
               <div
                 key={data.id}
                 className={`data-item ${selectedId === data.id ? 'selected' : ''}`}
-                onClick={() => handleViewDetails(data.id)} // Thêm sự kiện onClick cho toàn bộ div
+                onClick={() => handleViewDetails(data.id)}
               >
-                <h3>Tên file đánh giá:{data.fileName }</h3>
+                <h3>Tên file đánh giá: {data.fileName}</h3>
                 <p>Thời gian: {new Date(data.timestamp).toLocaleString()}</p>
                 <button onClick={(e) => { e.stopPropagation(); handleDelete(data.id); }}>Xóa</button>
               </div>

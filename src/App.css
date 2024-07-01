@@ -3,43 +3,6 @@
   text-align: center; /* Căn giữa tất cả các văn bản trong toàn bộ ứng dụng */
 }
 
-.navbar {
-  background-color: #333;
-  overflow: hidden;
-}
-
-.menu {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center; /* Căn giữa các mục menu */
-}
-
-.menu li {
-  float: left;
-}
-
-.menu li a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-.menu li a:hover {
-  background-color: #111;
-}
-
-.center-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh; /* Chiều cao của container, điều chỉnh theo nhu cầu */
-  flex-direction: column; /* Đặt các phần tử theo cột */
-}
-
 body {
   font-family: 'Arial', sans-serif;
   background: #f0f2f5;
@@ -58,22 +21,40 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
+  justify-content: center; /* Căn giữa các mục menu */
 }
 
 .menu li {
   float: left;
 }
 
-.menu li a {
+.menu li a, .menu li button {
   display: block;
   color: white;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
+  background: none; /* Đảm bảo nút không có nền mặc định */
+  border: none; /* Xóa viền nút */
+  cursor: pointer; /* Đổi con trỏ chuột khi di chuột qua nút */
+  font-size: 16px; /* Đảm bảo kích thước chữ đồng nhất */
 }
 
-.menu li a:hover {
+.menu li a:hover, .menu li button:hover {
   background-color: #45a049;
+}
+
+/* Điều chỉnh nút khi nhấn */
+.menu li button:focus {
+  outline: none;
+}
+
+.center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh; /* Chiều cao của container, điều chỉnh theo nhu cầu */
+  flex-direction: column; /* Đặt các phần tử theo cột */
 }
 
 .container {
@@ -97,4 +78,14 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+.register-link {
+  color: #007bff; /* Màu xanh nổi bật */
+  cursor: pointer;
+  text-decoration: underline; /* Gạch chân để nổi bật liên kết */
+}
+
+.register-link:hover {
+  color: #0056b3; /* Màu xanh đậm hơn khi hover */
 }

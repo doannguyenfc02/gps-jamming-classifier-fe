@@ -15,6 +15,9 @@ const Login = ({ onLogin }) => {
             onLogin(); // Gọi hàm onLogin khi đăng nhập thành công
         } catch (error) {
             setMessage(error.response ? error.response.data : "Đăng nhập thất bại.");
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000); // Tự động load lại trang sau 2 giây
         }
     };
 

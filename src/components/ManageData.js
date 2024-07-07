@@ -49,6 +49,32 @@ const ManageData = () => {
     axios.get(`https://localhost:7162/api/Spectrograms/${id}`)
       .then((response) => {
         setDetails(response.data);
+        // Danh sách các class cần theo dõi
+        const jammingClasses = ['NB', 'DME', 'SingleAM', 'SingleChirp', 'SingleFM'];
+        const counts = {};
+        let hasJammingSignal = false;
+  
+        // Thống kê số lượng từng loại tín hiệu
+        response.data.forEach(image => {
+          counts[image.class] = (counts[image.class] || 0) + 1;
+          if (jammingClasses.includes(image.class)) {
+            hasJammingSignal = true; // Xác định có tín hiệu phá sóng
+          }
+        });
+
+         // Xây dựng thông điệp kết quả
+         if (!hasJammingSignal) {
+          setMessage("Không có tín hiệu phá sóng");
+        } else {
+          const totalCount = response.data.length;
+          let resultMessage = "Có tín hiệu phá sóng\n";
+          jammingClasses.forEach(key => {
+            if (counts[key]) { // Chỉ thêm vào message nếu có tín hiệu
+              resultMessage += `\n• ${counts[key]}/${totalCount} spectrogram tín hiệu ${key}`;
+            }
+          });
+          setMessage(resultMessage); // Lưu danh sách các mục vào state
+        }
       })
       .catch((error) => {
         setMessage('Không thể lấy chi tiết dữ liệu.');
@@ -63,7 +89,7 @@ const ManageData = () => {
     <div className="manage-data-container">
       <div className="data-list">
         <h1>Quản lý dữ liệu</h1>
-        {message && <p>{message}</p>}
+        {message && <p></p>}
         {error ? (
           <p>{error}</p>
         ) : (
@@ -76,6 +102,7 @@ const ManageData = () => {
               >
                 <h3>Tên file đánh giá: {data.fileName}</h3>
                 <p>Thời gian: {new Date(data.timestamp).toLocaleString()}</p>
+                
                 <button onClick={(e) => { e.stopPropagation(); handleDelete(data.id); }}>Xóa</button>
               </div>
             ))}
@@ -85,11 +112,12 @@ const ManageData = () => {
       <div className="details-view">
         {details ? (
           <div>
-            <h2>Chi tiết</h2>
+            <h2>Chi tiết kết quả phân loại</h2>
+            <p>{message}</p>
             {details.map((detail, index) => (
               <div key={index} className="detail-item">
-                <h3>{detail.class}</h3>
                 <img src={`data:image/png;base64,${detail.dataBase64}`} alt={detail.class} />
+                <h3>Lớp tín hiệu: {detail.class}</h3>
               </div>
             ))}
           </div>

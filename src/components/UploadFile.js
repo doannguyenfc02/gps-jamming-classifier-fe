@@ -68,7 +68,7 @@ const UploadFile = () => {
             });
 
             if (response.status === 200) {
-                setMessage('Tải tệp lên thành công: ' + response.data.message);
+                setMessage('Xử lý thành công');
                 setSignalDataId(response.data.signalDataId);
                 setShowResults(true); // Hiển thị kết quả sau khi tải lên thành công
             } else if (response.status === 202) {
@@ -92,14 +92,44 @@ const UploadFile = () => {
 
     const handleViewDetails = () => {
         axios.get(`https://localhost:7162/api/Spectrograms/${signalDataId}`)
-            .then((response) => {
-                setImages(response.data);
-                setShowDetails(true); // Hiển thị chi tiết khi nhận được dữ liệu
-            })
-            .catch((error) => {
-                setMessage('Error fetching images: ' + error.message);
+          .then((response) => {
+            setImages(response.data);
+            setShowDetails(true); // Hiển thị chi tiết khi nhận được dữ liệu
+      
+            // Danh sách các class cần theo dõi
+            const jammingClasses = ['NB', 'DME', 'SingleAM', 'SingleChirp', 'SingleFM'];
+            const counts = {};
+            let hasJammingSignal = false;
+      
+            // Thống kê số lượng từng loại tín hiệu
+            response.data.forEach(image => {
+              counts[image.class] = (counts[image.class] || 0) + 1;
+              if (jammingClasses.includes(image.class)) {
+                hasJammingSignal = true; // Xác định có tín hiệu phá sóng
+              }
             });
-    };
+      
+            // Xây dựng thông điệp kết quả
+            if (!hasJammingSignal) {
+              setMessage("Không có tín hiệu phá sóng");
+            } else {
+              const totalCount = response.data.length;
+              let resultMessage = "Có tín hiệu phá sóng\n";
+              jammingClasses.forEach(key => {
+                if (counts[key]) { // Chỉ thêm vào message nếu có tín hiệu
+                  resultMessage += `\n• ${counts[key]}/${totalCount} spectrogram tín hiệu ${key}`;
+                }
+              });
+              setMessage(resultMessage); // Lưu danh sách các mục vào state
+            }
+          })
+          .catch((error) => {
+            setMessage('Error fetching images: ' + error.message);
+          });
+      };
+    
+      
+      
 
     const handleToggleDetails = () => {
         setShowDetails(!showDetails);
@@ -123,9 +153,11 @@ const UploadFile = () => {
         }
     };
 
+    
+      
     return (
         <div>
-            <h1>Phân loại Nhiễu GPS</h1>
+            <h1>Phát hiện, phân loại tín hiệu phá sóng GPS</h1>
             <div className="results-container">
                 <div className="left-panel">
                     <div>
@@ -175,7 +207,13 @@ const UploadFile = () => {
                     {showResults && (
                         <>
                             <h2>Kết quả phát hiện</h2>
+                            {Array.isArray(message) ? (
+                            <ul>
+                                {message.map((item, index) => <li key={index}>{item}</li>)}
+                            </ul>
+                            ) : (
                             <p>{message}</p>
+                            )}
                             {showDetails ? (
                                 <button onClick={handleToggleDetails}>Ẩn chi tiết</button>
                             ) : (
@@ -189,7 +227,7 @@ const UploadFile = () => {
                         {images.map((image, index) => (
                             <div key={index}>
                                 <img src={`data:image/png;base64,${image.dataBase64}`} alt={image.class} />
-                                <p>Lớp nhiễu: {image.class}</p>
+                                <p>Lớp tín hiệu: {image.class}</p>
                             </div>
                         ))}
                     </div>
